@@ -1,0 +1,20 @@
+{
+    "name": "backend-client-survey-test-app",
+    "version": "1.0.0",
+    "description": "RESTful API with Node.js, Express, and PostgreSQL",
+    "main": "server.js",
+    "license": "MIT",
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "express-generator": "^4.16.1",
+        "nodemon": "^2.0.2",
+        "path": "^0.12.7",
+        "pg": "^7.17.1"
+    },
+    "scripts": {
+        "dev": "nodemon ./src/app.js"
+    }
+}
