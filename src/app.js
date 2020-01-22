@@ -1,24 +1,40 @@
+
 const express = require("express");
-const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
 const cors = require("cors");
-let api = require("./api/api");
-const app = express();
+const bodyParser = require("body-parser");
 
-//PORTA VA IN CONFING
-console.log(dotenv.config())
-const port = process.env.PORT;
 
-async function startServer() {
+var context = {
+  survey: {
+    endPoint: "/survey",
+    route: require("./routes/surveyRoute"),
+    service: require("./services/surveyService"),
+    repository: require("./repository/surveyRepository")
+  },
+  report: {
+    endPoint: "/report",
+    route: require("./routes/reportRoute"),
+    service: require("./services/reportService"),
+    repository: require("./repository/reportRepository")
+  }
+};
+
+exports.bootStrapApp = async function(pool){
+
+  const app = express();
   app.use(cors());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  api(app);
+  for (let c in context) {
+    try {
+      context[c].service.setUpPoolConnection(context[c].repository, pool);
+      let router = await context[c].route.setUpRoute(context[c].service);
+      app.use(context[c].endPoint, router);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return app;
+};
 
-  app.listen(port, () => {
-    console.log("Server is running on port: " + port);
-  });
-}
-
-startServer();
