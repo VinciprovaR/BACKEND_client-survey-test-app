@@ -4,10 +4,9 @@ const router = express.Router();
 exports.setUpRoute = async function(service) {
   
   router.get("/getAllQuestionAndAnswer", service.getAllQuestionAndAnswer);
-
-  router.get("/getAllQuestion", service.getAllQuestion);
-  router.put("/updateQuestion", service.updateQuestion);
-  router.post("/createQuestion", service.createQuestion);
+  router.get("/getAllQuestions", service.getAllQuestions);
+  router.put("/updateQuestion", service.createOrUpdateQuestion);
+  router.post("/createQuestion", service.createOrUpdateQuestion);
 
   return router; 
 };
