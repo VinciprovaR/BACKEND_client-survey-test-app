@@ -16,6 +16,12 @@ var context = {
     route: require("./routes/reportRoute"),
     service: require("./services/reportService"),
     repository: require("./repository/reportRepository")
+  },
+  surveyPool: {
+    endPoint: "/surveyPool",
+    route: require("./routes/surveyPoolRoute"),
+    service: require("./services/surveyPoolService"),
+    repository: require("./repository/surveyPoolRepository")
   }
 };
 

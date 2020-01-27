@@ -46,48 +46,6 @@ exports.setUpPoolConnection = async (r, p) => {
   repository = r;
 };
 
-exports.getAllQuestionAndAnswer = async (request, response) => {
-  try {
-    pool.query(repository.getAllQuestions, (error, results) => {
-      if (error) {
-        response.status(500).json({ errorMesage: error.message, error: error });
-      }
-      let fullResult = [];
-      if (results.rows.length > 0) {
-        results.rows.forEach((question, index) => {
-          pool.query(repository.getAnswerByQuestionId, [question.id], (error, resultsAnswer) => {
-            if (error) {
-              response.status(500).json({ errorMesage: error.message, error: error });
-            }
-            question["allAnswers"] = resultsAnswer.rows;
-            fullResult.push(question);
-            if (index === results.rows.length - 1) {
-              response.status(200).json(fullResult);
-            }
-          });
-        });
-      } else {
-        response.status(200).json([]);
-      }
-    });
-  } catch (error) {
-    response.status(500).json({ errorMesage: error.message, error: error });
-  }
-};
-
-exports.getAllQuestions = async (request, response) => {
-  try {
-    pool.query(repository.getAllQuestions, (error, results) => {
-      if (error) {
-        response.status(500).json({ errorMesage: error.message, error: error });
-      }
-      response.status(200).json(results.rows);
-    });
-  } catch (error) {
-    response.status(500).json({ errorMesage: error.message, error: error });
-  }
-};
-
 exports.deleteQuestion = async (request, response) => {
   createConnectionIstance()
     .then(connOK => {
@@ -124,7 +82,8 @@ exports.deleteQuestion = async (request, response) => {
 };
 
 exports.createResultSurvey = async (request, response) => {
-  createConnectionIstance()
+  try{
+    createConnectionIstance()
     .then(connOK => {
       let fakeUser = request.headers.clientHost || "user_" + new Date().getUTCMilliseconds() + new Date().getUTCSeconds();
       let client = connOK.client;
@@ -154,7 +113,7 @@ exports.createResultSurvey = async (request, response) => {
                 }
 
                 let snapAnswerId = saID.rows[0].id;
-                client.query(repository.createResultUserSurvey, [resultUserId, snapQuestionId, snapAnswerId, fakeUser], (error, finalResultSurvey) => {
+                client.query(repository.createResultUserSurvey, [resultUserId, snapQuestionId, snapAnswerId, fakeUser, value.id, value.answer.id], (error, finalResultSurvey) => {
                   if (error) {
                     shouldAbort(error, client, release, response);
                   }
@@ -165,7 +124,7 @@ exports.createResultSurvey = async (request, response) => {
                       }
                       console.log("===RELEASE===");
                       release();
-                      response.status(200).json();
+                      response.status(200).json({"result": "Sondaggio salvato con successo"});
                     });
                   }
                 });
@@ -178,6 +137,11 @@ exports.createResultSurvey = async (request, response) => {
     .catch(connKO => {
       connKO.shouldAbort(connKO.error, connKO.client, connKO.release, connKO.response);
     });
+  }
+  catch(error){
+    response.status(500).json({ errorMessage: error.message, error: error });
+  }
+
 };
 
 exports.createOrUpdateQuestion = async (request, response) => {

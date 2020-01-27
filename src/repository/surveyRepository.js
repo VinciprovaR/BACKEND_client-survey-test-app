@@ -1,8 +1,5 @@
 module.exports = {
-  getAllQuestions: "SELECT * FROM public.questions",
-  getAllAnswers: "SELECT * FROM public.answers",
   findAnswerById: "SELECT * FROM public.answers WHERE id = $1",
-  getAnswerByQuestionId: "SELECT * FROM public.answers where question_id = $1",
   updateQuestion: "UPDATE public.questions SET testo_domanda = $1, last_modified_by = $2 WHERE id = $3 AND testo_domanda != $1\
   RETURNING *",
   createQuestion: "INSERT INTO public.questions\
@@ -43,6 +40,6 @@ RETURNING *",
   findSnapQuestionId: "SELECT id FROM public.snapshot_questions WHERE question_id = $1 AND created_date = $2",
   createResultUserSurvey:
     "INSERT INTO public.results_users_questions_answers\
-  (id, result_user_id, snapshot_question_id, snapshot_answer_id, created_by, last_modified_by)\
-  VALUES(nextval('results_users_questions_answers_sequence'), $1, $2, $3, $4, $4) RETURNING * "
+  (id, result_user_id, snapshot_question_id, snapshot_answer_id, created_by, last_modified_by, question_id, answer_id)\
+  VALUES(nextval('results_users_questions_answers_sequence'), $1, $2, $3, $4, $4, $5, $6) RETURNING * "
 };
